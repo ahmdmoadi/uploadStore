@@ -7,6 +7,7 @@ const JSZip = require("jszip");
 let serveIndex = require("serve-index");
 let sh = require("shelljs");
 let cors = require("cors");
+let PORT = process.env.PORT || 80;
 
 // console.log(fs.existsSync("./uploads/"))
 // console.log(fs.existsSync("./uploadkk/"))
@@ -80,7 +81,7 @@ app.get("/delete/:filename",(req,res) => {
 })
 
 
-app.listen(80);
+app.listen(PORT);
 
 /**
  * 
