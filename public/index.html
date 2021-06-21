@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: visible !important;
+        }
+        a:visited {
+            color: blue;
+        }
+        code {
+            font-family: monospace;
+        }
+        #wrapper h1{
+            display: none;
+        }
+        button {
+            z-index: 10;
+            background: black;
+            color:white;
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <form action="http://localhost/upload" method="POST" enctype="multipart/form-data" onsubmit="return false">
+    <input type="file" name="file" id="file" multiple="false">
+    <input type="submit" value="Upload">
+    </form>
+    <div id="out"></div>
+    <div id="filelist"></div>
+
+    <script>
+        // fetch("http://localhost/upload/",{
+        //     body: file.files[0],
+        //     method: "POST"
+        // })
+        // document.querySelector("input[type=file]#file").
+        /**
+         * 
+         * @type {HTMLInputElement}
+         */
+        let inp = document.querySelector("input[type=file]");
+        inp.onchange = (e) => {
+            let reader = new FileReader();
+            reader.readAsDataURL(inp.files[0]);
+            reader.onload = () => {
+                let _ = reader.result;
+                let mime = _.slice(_.indexOf(":")+1,_.indexOf(";"))
+                console.log(mime);
+                process(mime,_,inp.files[0].name);
+            }
+        }
+        function process(mime,base64,name) {
+            let out = document.querySelector("#out");
+            if(mime.indexOf("image") != -1){
+                let img = new Image();
+                img.src = base64;
+                out.innerHTML = "Preview:<br>";
+                out.appendChild(img);
+            } else if(mime.indexOf("text") != -1){
+                fetch(base64).then(_=>{return _.text()}).then(_ => {
+                    out.innerHTML = "Preview:<br>";
+                    out.innerText = _;
+                })
+            } else {
+                out.innerHTML = `
+                Warning: This may contian binary<br> which may mess up your screen! <a href="#" onclick="show('${base64}')">Show Anyway</a>`;
+            }
+        }
+        function show(x){
+            fetch(x).then(_=>{return _.text()}).then(_ => {
+                    out.innerHTML = "Preview:<br>";
+                    out.innerHTML += "<code>"+_.split("\n").join("<br>").split("\t").join(" ")+"</code>";
+                })
+        }
+        /**
+         * 
+         * @param file {File}
+         */
+        let filelist = document.getElementById("filelist");
+
+        fetch("http://localhost/public/")
+        .then(_ => {return _.text()})
+        .then(data => {
+            filelist.innerHTML = data;
+            let spans = document.querySelectorAll("span.name");
+            spans.forEach((span,i) => {
+                console.log(span.innerHTML);
+                let filename = span.innerHTML;
+                span.outerHTML += `   <button onclick="deleteFile('${filename}')">Delete</button>   `;
+            });
+            let lists = document.querySelectorAll("li");
+            lists.forEach(list=>{
+                list.outerHTML += "<br>"
+            });
+            document.querySelectorAll("style")[1].innerHTML="";
+            let as = document.querySelectorAll("a.icon");
+            as.forEach(a=>{
+                a.download = a.children[0].innerHTML;
+            });
+        });
+        /**
+         * 
+         * @param filename {String}
+         */
+        function deleteFile(filename) {
+            fetch("http://localhost/delete/"+filename).then(_ => {return _.text()}).then(_ => {
+                console.log(_);
+                setTimeout(()=>{location.reload(),100})
+            })
+        }
+        // ul>li>a>span.name
+    </script>
+</body>
+</html>

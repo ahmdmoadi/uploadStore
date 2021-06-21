@@ -1,0 +1,28 @@
+{
+  "name": "template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "atob": "^2.1.2",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7",
+    "shelljs": "^0.8.4",
+    "shx": "^0.3.3",
+    "socket.io": "^4.1.1",
+    "static-server": "^2.2.1"
+  },
+  "dependencies": {
+    "compression": "^1.7.4",
+    "express-fileupload": "^1.2.1",
+    "image-data-uri": "^2.0.1",
+    "jszip": "^3.6.0",
+    "serve-index": "^1.9.1"
+  }
+}
