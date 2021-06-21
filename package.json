@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon app.js"
+    "start": "node server.js",
+    "start:frontend": "npm run start:localhost"
   },
   "author": "",
   "license": "MIT",
